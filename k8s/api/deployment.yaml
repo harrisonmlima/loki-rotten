@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web
+        image: harrisonlima/rotten-potatoes:v1
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+          requests:
+            memory: "64Mi"
+            cpu: "300m"
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 5000
+          initialDelaySeconds: 1
+          failureThreshold: 2
+          successThreshold: 1
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 1
+          failureThreshold: 2
+          successThreshold: 1
+          periodSeconds: 10
+        ports:
+        - containerPort: 5000
+        envFrom:
+          - configMapRef:
+              name: api-configmap
+        env:
+          - name: MONGODB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: MONGO_INITDB_ROOT_USERNAME
+                name: mongodb-secret
+          - name: MONGODB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: MONGO_INITDB_ROOT_PASSWORD
+                name: mongodb-secret
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - "web"
+              topologyKey: kubernetes.io/hostname
