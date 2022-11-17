@@ -10,13 +10,6 @@ promtail:
 fluent-bit:
   enabled: false
 
-grafana:
-  enabled: true
-
-  service:
-    type: NodePort
-    nodePort: 31500
-
 prometheus:
   enabled: true
   rbac:
@@ -1972,6 +1965,16 @@ prometheus:
     #     extra-data: "value"
 
 
+grafana:
+  enabled: true
+  service:
+    type: NodePort
+    nodePort: 31500
+  data:
+    admin-user: YWRtaW4=
+    admin-password: YWRtaW4=
+    admin.userKey: YWRtaW4=
+    admin.passwordKey: YWRtaW4=
 
 # proxy is currently only used by loki test pod
 # Note: If http_proxy/https_proxy are set, then no_proxy should include the
@@ -1981,4 +1984,3 @@ proxy:
   http_proxy: ""
   https_proxy: ""
   no_proxy: ""
-
