@@ -10,7 +10,7 @@ k3d cluster create meucluster --agents 3 --servers 2 -p 80:30000@loadbalancer" -
 Executar kubectl apply -f k8s -R
 
 ### Criação do Loki
-helm upgrade --install loki grafana/loki-stack --namespace loki --values values-loki.yaml
+helm upgrade --install loki grafana/loki-stack --namespace loki --values values-loki.yaml --create-namespace
 
 ### Comando para pegar o password do grafana, o username é admin
 kubectl get secret --namespace loki loki-grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
